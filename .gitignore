@@ -1,0 +1,10 @@
+node_modules
+frontend/dist
+client/dist
+config.y*ml
+tmp/
+*.db
+data/
+logs/
+Mou1ght-Server.exe
+main.exe
