@@ -4,7 +4,7 @@ import (
 	"Mou1ght-Server/api/middleware"
 	"Mou1ght-Server/api/response"
 	"Mou1ght-Server/internal/controller"
-	"Mou1ght-Server/internal/dto"
+	"Mou1ght-Server/internal/do/dto"
 	"Mou1ght-Server/internal/model"
 	"net/http"
 	"strconv"
@@ -31,7 +31,7 @@ func articleList(c *gin.Context) {
 }
 
 func articleAdd(c *gin.Context) {
-	article := &dto.ArticlePostDTO{}
+	article := &model.ArticlePostDTO{}
 	err := c.BindJSON(article)
 	if err != nil {
 		response.Fail(c, "Invalid article data", nil)
@@ -86,7 +86,7 @@ func articleUpdate(c *gin.Context) {
 		response.Fail(c, "Invalid article id", nil)
 		return
 	}
-	article := &dto.ArticlePostDTO{}
+	article := &model.ArticlePostDTO{}
 	err = c.BindJSON(article)
 	if err != nil {
 		response.Fail(c, "Invalid article data", nil)

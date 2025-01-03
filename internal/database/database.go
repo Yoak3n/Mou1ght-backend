@@ -21,6 +21,8 @@ func init() {
 	case "mysql":
 		mdb = initMysql()
 		logger.Info.Println("Already connected to MySQL")
+	case "postgres":
+		mdb = initPostgres()
 	}
 	migrateTables(&model.Article{}, &model.User{})
 	conn, _ = mdb.DB()

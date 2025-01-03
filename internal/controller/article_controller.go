@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"Mou1ght-Server/internal/dto"
 	"Mou1ght-Server/internal/model"
 	"Mou1ght-Server/package/logger"
 	"errors"
@@ -14,16 +13,17 @@ func CheckExistArticle(a *model.Article, id uint) (bool, *gorm.DB) {
 	if result.RowsAffected == 0 {
 		return false, nil
 	}
-	logger.Info.Println(a.Author)
+	logger.Info.Println(a.AuthorId)
 	return true, result
 }
 
 // AddArticle 创建文章
-func AddArticle(a *dto.ArticlePostDTO) error {
+func AddArticle(a *model.ArticlePostDTO) error {
 
 	authors := make([]model.User, 0)
 	user := GetUserByID(a.AuthorID)
 	authors = append(authors, *user)
+	updatedCategoryRecord := CreateCategory(a.Category)
 
 	if len(authors) != 0 {
 		article := &model.Article{
@@ -31,9 +31,9 @@ func AddArticle(a *dto.ArticlePostDTO) error {
 			Description: a.Description,
 			Label:       a.Label,
 			Content:     a.Content,
-			Author:      a.AuthorID,
+			AuthorId:    a.AuthorID,
 			AuthorName:  user.NickName,
-			Category:    a.Category,
+			Category:    updatedCategoryRecord.ID,
 		}
 		result := db.Create(article)
 		if result.Error != nil {
@@ -58,22 +58,22 @@ func DeleteArticle(id uint) error {
 }
 
 // UpdateArticle 更新文章
-func UpdateArticle(a *dto.ArticlePostDTO, id uint) error {
+func UpdateArticle(a *model.ArticlePostDTO, id uint) error {
 	article := &model.Article{}
+	updatedCategoryRecord := CreateCategory(a.Category)
 	result := db.Model(article).Where("id = ?", id).Updates(model.Article{
 		Title:       a.Title,
 		Description: a.Description,
 		Label:       a.Label,
 		Content:     a.Content,
-		Author:      a.AuthorID,
-		Category:    a.Category,
+		AuthorId:    a.AuthorID,
+		Category:    updatedCategoryRecord.ID,
 	})
 	return result.Error
 }
 
 // GetArticleList 获取文章列表
 func GetArticleList() ([]*model.Article, error) {
-
 	articles := make([]*model.Article, 0)
 	result := db.Find(&articles)
 	if result.Error != nil {
@@ -96,6 +96,16 @@ func GetArticleById(id uint) (*model.Article, error) {
 func GetArticlesByTitle(label string) ([]*model.Article, error) {
 	articles := make([]*model.Article, 0)
 	result := db.Where("label = ?", label).Find(articles)
+	if result.RowsAffected == 0 {
+		return nil, errors.New("article not found")
+	}
+	return articles, nil
+}
+
+// GetArticlesByAuthorId 通过作者ID获取文章
+func GetArticlesByAuthorId(id uint) ([]*model.Article, error) {
+	articles := make([]*model.Article, 0)
+	result := db.Where("author_id = ?", id).Find(articles)
 	if result.RowsAffected == 0 {
 		return nil, errors.New("article not found")
 	}

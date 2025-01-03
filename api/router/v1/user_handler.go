@@ -5,7 +5,7 @@ import (
 	"Mou1ght-Server/api/response"
 	"Mou1ght-Server/internal/controller"
 	"Mou1ght-Server/internal/database"
-	"Mou1ght-Server/internal/dto"
+	"Mou1ght-Server/internal/do/dto"
 	"Mou1ght-Server/internal/model"
 	"Mou1ght-Server/package/logger"
 	"Mou1ght-Server/package/util"
